@@ -1,0 +1,36 @@
+rules:
+    - path: ./examples/files
+      recursive: true
+      op: AND
+      actions:
+        - action: touch
+        - action: echo
+          payload: "Found name && contains"
+      filters:
+        - filter: name
+          payload: "[0-9]+"
+        - filter: contains
+          payload: "1234"
+
+    - path: ./examples/files
+      recursive: true
+      actions:
+        - action: rename
+          payload: foo.json
+        - action: echo
+          payload: "Found ext"
+      filters:
+        - filter: ext
+          payload: .json
+
+    - path: ./examples/files
+      recursive: true
+      op: OR
+      actions:
+        - action: echo
+          payload: "Found size"
+      filters:
+        - filter: size
+          payload: gt 10000
+        - filter: size
+          payload: eq 0
