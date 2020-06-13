@@ -13,8 +13,9 @@ type Action struct {
 	Payload string `yaml:"payload"`
 }
 
-func (action *Action) echoAction(filePath string) {
-	log.Printf("[%s] %s\n", filePath, action.Payload)
+func (action *Action) echoAction(filePath string, vars *Vars) {
+	msg := vars.Process(action.Payload, filePath)
+	log.Printf("[%s] %s\n", filePath, msg)
 }
 
 func (action *Action) touchAction(filePath string) {
@@ -25,17 +26,19 @@ func (action *Action) touchAction(filePath string) {
 	}
 }
 
-func (action *Action) moveAction(filePath string) {
-	err := os.Rename(filePath, action.Payload)
+func (action *Action) moveAction(filePath string, vars *Vars) {
+	newPath := vars.Process(action.Payload, filePath)
+	err := os.Rename(filePath, newPath)
 	if err != nil {
-		log.Fatalf("Failed to move file: %s to: %s", filePath, action.Payload)
+		log.Fatalf("Failed to move file: %s to: %s", filePath, newPath)
 	}
 }
 
-func (action *Action) renameAction(filePath string) {
-	err := os.Rename(filePath, validatePath(path.Dir(filePath))+action.Payload)
+func (action *Action) renameAction(filePath string, vars *Vars) {
+	newFileName := vars.Process(action.Payload, filePath)
+	err := os.Rename(filePath, validatePath(path.Dir(filePath))+newFileName)
 	if err != nil {
-		log.Fatalf("Failed to rename file: %s to: %s", filePath, action.Payload)
+		log.Fatalf("Failed to rename file: %s to: %s", filePath, newFileName)
 	}
 }
 

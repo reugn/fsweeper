@@ -10,28 +10,30 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-var (
+const (
 	operatorAnd = "AND"
 	operatorOr  = "OR"
 )
 
-var (
+const (
 	filterName       = "name"
 	filterExtension  = "ext"
 	filterSize       = "size"
 	filterLastEdited = "lastEdited"
 	filterContains   = "contains"
-
-	// Filters is the supported filters list
-	Filters = [...]string{filterName, filterExtension, filterSize, filterLastEdited, filterContains}
 )
 
-var (
+const (
 	actionEcho   = "echo"
 	actionTouch  = "touch"
 	actionMove   = "move"
 	actionRename = "rename"
 	actionDelete = "delete"
+)
+
+var (
+	// Filters is the supported filters list
+	Filters = [...]string{filterName, filterExtension, filterSize, filterLastEdited, filterContains}
 
 	// Actions is the supported actions list
 	Actions = [...]string{actionEcho, actionTouch, actionMove, actionRename, actionDelete}
@@ -99,17 +101,17 @@ func (r *Rule) filtersResult(res []bool) bool {
 	return true
 }
 
-func (r *Rule) runActions(filePath string) {
+func (r *Rule) runActions(filePath string, vars *Vars) {
 	for _, action := range r.Actions {
 		switch action.Action {
 		case actionEcho:
-			action.echoAction(filePath)
+			action.echoAction(filePath, vars)
 		case actionTouch:
 			action.touchAction(filePath)
 		case actionMove:
-			action.moveAction(filePath)
+			action.moveAction(filePath, vars)
 		case actionRename:
-			action.renameAction(filePath)
+			action.renameAction(filePath, vars)
 		case actionDelete:
 			action.deleteAction(filePath)
 		default:
@@ -120,6 +122,7 @@ func (r *Rule) runActions(filePath string) {
 
 // Config is a multiple rules container
 type Config struct {
+	Vars  Vars   `yaml:"vars"`
 	Rules []Rule `yaml:"rules"`
 	wg    sync.WaitGroup
 }
@@ -148,6 +151,7 @@ func ReadConfigFromFile(file string) *Config {
 	// m, _ := yaml.Marshal(c)
 	// log.Printf("Parsed configuration file\n%s\n", string(m))
 
+	c.Vars.init()
 	return c
 }
 
@@ -161,6 +165,7 @@ func ReadConfigFromByteArray(configYaml []byte) *Config {
 		return nil
 	}
 
+	c.Vars.init()
 	return c
 }
 
@@ -196,7 +201,7 @@ func (c *Config) iterate(rule Rule) {
 				defer c.wg.Done()
 
 				if rule.checkFilters(path) {
-					rule.runActions(path)
+					rule.runActions(path, &c.Vars)
 				}
 			}(filePath)
 		}
