@@ -1,0 +1,14 @@
+vars:
+    dateTimeFormat: "2006.01.02[15-04-05]"
+rules:
+    - path: ./examples/files
+      recursive: true
+      op: AND
+      actions:
+        - action: echo
+          payload: "Found {{ .FileName | upper | quote }} at {{ .DateTime }}, size {{ .FileSize }}"
+      filters:
+        - filter: name
+          payload: "[0-9]+"
+        - filter: contains
+          payload: "1234"
