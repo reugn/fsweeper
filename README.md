@@ -11,14 +11,6 @@ go build
 ```
 
 ## Usage
-`fsweeper` can be used in either a server or CLI mode.  
-To run it in a server mode: `./fsweeper --http`.  
-Running in a server mode will expose the following HTTP endpoints:
-* `GET /` - health endpoint
-* `GET /execute` - execute rules from the default configuration file
-* `POST /execute` - execute a provided yaml configuration
-* `POST /config` - write rules to the default configuration file
-
 Command line options list:
 ```
 ./fsweeper --help
@@ -32,12 +24,6 @@ Usage of ./fsweeper:
         Open default configuration file in $EDITOR
   -filters
         Show supported filters
-  -host string
-        HTTP Server host (default "0.0.0.0")
-  -http
-        Run in a HTTP mode
-  -port int
-        HTTP Server port (default 8081)
   -version
         Show version
 ```
