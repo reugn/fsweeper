@@ -8,18 +8,13 @@ import (
 	"os/exec"
 	"time"
 
-	"github.com/reugn/fsweeper/http"
 	"github.com/reugn/fsweeper/rules"
 )
 
 var version = "0.1.0"
 
 var (
-	configFile      = flag.String("conf", rules.DefaultConfigFile, "Configuration file path")
-	httpParam       = flag.Bool("http", false, "Run in a HTTP mode")
-	serverHostParam = flag.String("host", "0.0.0.0", "HTTP Server host")
-	serverPortParam = flag.Int("port", 8081, "HTTP Server port")
-
+	configFile     = flag.String("conf", rules.GetDefaultConfigFile(), "Configuration file path")
 	configureParam = flag.Bool("configure", false, "Open default configuration file in $EDITOR")
 	versionParam   = flag.Bool("version", false, "Show version")
 	filtersParam   = flag.Bool("filters", false, "Show supported filters")
@@ -38,20 +33,15 @@ func main() {
 		return
 	}
 
-	if *httpParam {
-		log.Printf("Starting HTTP server on port %d...\n", *serverPortParam)
-		http.StartHTTPServer(*serverHostParam, *serverPortParam)
-	} else {
-		// read configuration file
-		config := rules.ReadConfigFromFile(*configFile)
+	// read configuration file
+	config := rules.ReadConfigFromFile(*configFile)
 
-		// execute rules
-		log.Println("Starting execute rules...")
-		start := time.Now()
-		config.Execute()
+	// execute rules
+	log.Println("Starting execute rules...")
+	start := time.Now()
+	config.Execute()
 
-		log.Printf("Done in %v.\n", time.Since(start))
-	}
+	log.Printf("Done in %v.\n", time.Since(start))
 }
 
 func handleInfoFlags() bool {
