@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/reugn/fsweeper/ospkg"
+	"github.com/reugn/fsweeper/internal/ospkg"
 	"gopkg.in/yaml.v2"
 )
 
@@ -31,7 +31,7 @@ const (
 
 var re *regexp.Regexp = regexp.MustCompile(`\{\{(.+?)\}\}`)
 
-// Vars are the configuration variables to substitute
+// Vars represents configuration variables for substitution.
 type Vars struct {
 	TimeFormat     string `yaml:"timeFormat"`
 	DateFormat     string `yaml:"dateFormat"`
@@ -39,13 +39,13 @@ type Vars struct {
 	now            time.Time
 }
 
-// String is a Stringer interface implementation
+// String is the `fmt.Stringer` interface implementation.
 func (v *Vars) String() string {
 	arr, _ := yaml.Marshal(*v)
 	return string(arr)
 }
 
-// Process payload string
+// Process processes the payload string.
 func (v *Vars) Process(str string, ctx string) string {
 	compile := func(s string) string {
 		return v.processVariableBlock(s, ctx)
@@ -53,7 +53,7 @@ func (v *Vars) Process(str string, ctx string) string {
 	return re.ReplaceAllStringFunc(str, compile)
 }
 
-// compile single variable block
+// compile a single variable block.
 func (v *Vars) processVariableBlock(variable string, ctx string) string {
 	variable = strings.Trim(variable, "{{")
 	variable = strings.Trim(variable, "}}")
@@ -108,7 +108,7 @@ func (v *Vars) init() {
 	v.now = time.Now()
 }
 
-// returns file size
+// returns the file size
 func getFileSize(filePath string) string {
 	fi, err := os.Stat(filePath)
 	if err != nil {
@@ -117,29 +117,29 @@ func getFileSize(filePath string) string {
 	return strconv.FormatInt(fi.Size(), 10)
 }
 
-// returns file name
+// returns the file name
 func getFileName(filePath string) string {
 	p := strings.Split(filePath, ospkg.PathSeparator)
 	return p[len(p)-1]
 }
 
-// returns file extension
+// returns the file extension
 func getFileExtension(filePath string) string {
 	p := strings.Split(filePath, ".")
 	return p[len(p)-1]
 }
 
-// returns formatted time
+// returns the formatted time
 func (v *Vars) getTime() string {
 	return v.now.Format(v.TimeFormat)
 }
 
-// returns formatted date
+// returns the formatted date
 func (v *Vars) getDate() string {
 	return v.now.Format(v.DateFormat)
 }
 
-// returns formatted datetime
+// returns the formatted datetime
 func (v *Vars) getDateTime() string {
 	return v.now.Format(v.DateTimeFormat)
 }

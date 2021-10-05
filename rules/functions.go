@@ -16,7 +16,8 @@ const (
 	lenFunc   = "len"
 )
 
-// Pipeline chains together a series of template commands to compactly express a series of transformations
+// Pipeline chains together series of template commands to compactly express
+// series of transformations.
 func Pipeline(in string, chain []string) string {
 	out := in
 
