@@ -11,10 +11,11 @@ import (
 	"github.com/reugn/fsweeper/rules"
 )
 
-var version = "0.1.0"
+const version = "0.2.0"
 
 var (
-	configFile     = flag.String("conf", rules.GetDefaultConfigFile(), "Configuration file path")
+	configFile = flag.String("conf", rules.GetDefaultConfigFile(), "Configuration file path")
+
 	configureParam = flag.Bool("configure", false, "Open default configuration file in $EDITOR")
 	versionParam   = flag.Bool("version", false, "Show version")
 	filtersParam   = flag.Bool("filters", false, "Show supported filters")
@@ -25,7 +26,10 @@ func main() {
 	flag.Parse()
 
 	if *configureParam {
-		openFileInEditor(rules.GetDefaultConfigFile())
+		err := openFileInEditor(rules.GetDefaultConfigFile())
+		if err != nil {
+			log.Fatal(err)
+		}
 		return
 	}
 
@@ -33,7 +37,7 @@ func main() {
 		return
 	}
 
-	// read configuration file
+	// read a configuration file
 	config := rules.ReadConfigFromFile(*configFile)
 
 	// execute rules
