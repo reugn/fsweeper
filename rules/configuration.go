@@ -6,7 +6,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/reugn/fsweeper/ospkg"
+	"github.com/reugn/fsweeper/internal/ospkg"
 	"gopkg.in/yaml.v2"
 )
 
@@ -32,14 +32,14 @@ const (
 )
 
 var (
-	// Filters is the supported filters list
+	// Filters represents the supported filters list.
 	Filters = [...]string{filterName, filterExtension, filterSize, filterLastEdited, filterContains}
 
-	// Actions is the supported actions list
+	// Actions represents the supported actions list.
 	Actions = [...]string{actionEcho, actionTouch, actionMove, actionRename, actionDelete}
 )
 
-// Rule configuration to apply on a file
+// Rule represents a configuration to apply on a file.
 type Rule struct {
 	Path      string   `yaml:"path"`
 	Recursive bool     `yaml:"recursive"`
@@ -120,19 +120,19 @@ func (r *Rule) runActions(filePath string, vars *Vars) {
 	}
 }
 
-// Config is a multiple rules container
+// Config is a multiple rules container.
 type Config struct {
 	Vars  Vars   `yaml:"vars"`
 	Rules []Rule `yaml:"rules"`
 	wg    sync.WaitGroup
 }
 
-// ReadConfig reads configuration from the default configuration file
+// ReadConfig reads configuration from the default configuration file.
 func ReadConfig() *Config {
 	return ReadConfigFromFile(GetDefaultConfigFile())
 }
 
-// ReadConfigFromFile reads configuration from a custom configuration file
+// ReadConfigFromFile reads configuration from a custom configuration file.
 func ReadConfigFromFile(file string) *Config {
 	c := &Config{}
 
@@ -155,7 +155,7 @@ func ReadConfigFromFile(file string) *Config {
 	return c
 }
 
-// ReadConfigFromByteArray reads configuration from a given byte array
+// ReadConfigFromByteArray reads configuration from the given byte array.
 func ReadConfigFromByteArray(configYaml []byte) *Config {
 	c := &Config{}
 
@@ -169,7 +169,7 @@ func ReadConfigFromByteArray(configYaml []byte) *Config {
 	return c
 }
 
-// Execute rules
+// Execute executes rules.
 func (c *Config) Execute() {
 	for _, rule := range c.Rules {
 		c.wg.Add(1)
@@ -212,5 +212,6 @@ func validatePath(dirPath string) string {
 	if strings.HasSuffix(dirPath, ospkg.PathSeparator) {
 		return dirPath
 	}
+
 	return dirPath + ospkg.PathSeparator
 }

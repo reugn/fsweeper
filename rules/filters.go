@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-// Filter to verify on a file
+// Filter represents filter rules to apply on files.
 type Filter struct {
 	Filter  string `yaml:"filter"`
 	Payload string `yaml:"payload"`
@@ -28,7 +28,7 @@ func (f *Filter) extensionFilter(filePath string) bool {
 func (f *Filter) containsFilter(filePath string) bool {
 	data, err := ioutil.ReadFile(filePath)
 	if err != nil {
-		log.Printf("Failed to read file %s. %s\n", filePath, err.Error)
+		log.Printf("Failed to read file %s. %s\n", filePath, err.Error())
 		return false
 	}
 

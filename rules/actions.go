@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-// Action to perform on a file
+// Action represents an action to perform on a file.
 type Action struct {
 	Action  string `yaml:"action"`
 	Payload string `yaml:"payload"`
